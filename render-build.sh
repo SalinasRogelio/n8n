@@ -1,13 +1,22 @@
 #!/usr/bin/env bash
 set -e
 
-# 1) Habilita Corepack y pnpm 10.2.1
+echo "→ Instalando dependencias del proyecto"
 corepack enable
 corepack prepare pnpm@10.2.1 --activate
-
-# 2) Instala TODAS las dependencias
-#    ⚠️  OJO: SIN --frozen-lockfile
 pnpm install --no-frozen-lockfile
-
-# 3) Compila el monorepo
 pnpm run build
+
+echo "→ Descargando yt-dlp estático"
+curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp \
+  -o /usr/local/bin/yt-dlp
+chmod a+rx /usr/local/bin/yt-dlp
+
+echo "→ Descargando FFmpeg estático"
+curl -L https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz \
+  | tar -Jx
+cp ffmpeg-*/ffmpeg /usr/local/bin/
+chmod a+rx /usr/local/bin/ffmpeg
+rm -rf ffmpeg-*
+
+echo "→ Binarios listos en /usr/local/bin"
